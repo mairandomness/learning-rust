@@ -35,7 +35,7 @@ fn main() {
     let mut player = SCREEN_WIDTH / 2;
 
     let mut enemies = [[(0, 0, false); ENEMY_ROWS]; ENEMY_LINES];
-    enemies = *start_enemies(&mut enemies);
+    start_enemies(&mut enemies);
     let mut direction = 1;
 
     let mut enemy_wait = ENEMY_SPEED;
@@ -44,13 +44,13 @@ fn main() {
     while !root.window_closed() {
 
         // draw
-        draw_objects(&mut con, &enemies, player);
+        draw_objects(&mut con, player, &enemies);
         draw_canvas(&mut con, score);
         blit(&mut con, (0, 0), (SCREEN_WIDTH, SCREEN_HEIGHT), &mut root, (0, 0), 1.0, 1.0);
         root.flush();
 
         // erase objects before they move
-        erase(&mut con, &enemies, player);
+        erase(&mut con, player, &enemies);
 
         // move enemies
         if enemy_wait > 0 {
@@ -90,8 +90,7 @@ fn handle_keys(root: &mut Root, player: &mut i32) -> bool {
     false
 }
 
-fn start_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES])
-    -> &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES] {
+fn start_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
 
     let mut y = 3;
     let mut x: i32;
@@ -105,7 +104,6 @@ fn start_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES])
             x += 2;
         }
     }
-    enemies
 }
 
 fn move_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES], direction: &mut i32) {
@@ -133,8 +131,8 @@ fn draw_canvas(con: &mut Offscreen, score: i32) {
 
 
 
-fn draw_objects(con: &mut Offscreen,
-        enemies: &[[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES], player: i32) {
+fn draw_objects(con: &mut Offscreen, player: i32,
+        enemies: &[[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
 
     con.set_default_foreground(colors::GREEN);
     con.put_char(player, PLAYER_Y, 'W', BackgroundFlag::None);
@@ -148,8 +146,8 @@ fn draw_objects(con: &mut Offscreen,
     }
 }
 
-fn erase(con: &mut Offscreen,
-         enemies: &[[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES], player: i32) {
+fn erase(con: &mut Offscreen, player: i32,
+         enemies: &[[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
 
     con.put_char(player, PLAYER_Y, ' ', BackgroundFlag::None);
     for i in 0..ENEMY_LINES {
