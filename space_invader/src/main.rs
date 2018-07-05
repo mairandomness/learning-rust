@@ -71,6 +71,7 @@ fn main() {
     }
 }
 
+
 fn handle_keys(root: &mut Root, player: &mut i32) -> bool {
     let option_key = root.check_for_keypress(tcod::input::KeyPressFlags::all());
     match option_key {
@@ -90,8 +91,8 @@ fn handle_keys(root: &mut Root, player: &mut i32) -> bool {
     false
 }
 
-fn start_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
 
+fn start_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
     let mut y = 3;
     let mut x: i32;
     let x_start = (SCREEN_WIDTH - (ENEMY_ROWS as i32) * 2 + 1) / 2 ;
@@ -106,8 +107,8 @@ fn start_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
     }
 }
 
-fn move_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES], direction: &mut i32) {
 
+fn move_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES], direction: &mut i32) {
     for i in 0..ENEMY_LINES {
         for j in 0..ENEMY_ROWS {
             enemies[i][j].0 += *direction;
@@ -130,7 +131,6 @@ fn draw_canvas(con: &mut Offscreen, score: i32) {
 }
 
 
-
 fn draw_objects(con: &mut Offscreen, player: i32,
         enemies: &[[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
 
@@ -145,6 +145,7 @@ fn draw_objects(con: &mut Offscreen, player: i32,
         }
     }
 }
+
 
 fn erase(con: &mut Offscreen, player: i32,
          enemies: &[[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
