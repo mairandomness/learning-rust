@@ -1,0 +1,7 @@
+[package]
+name = "rustbridge"
+version = "0.1.0"
+authors = ["mairandomness <mairakodama@gmail.com>"]
+
+[dependencies]
+simple-server = "0.3.0"

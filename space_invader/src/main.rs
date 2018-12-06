@@ -11,6 +11,7 @@ const SCREEN_HEIGHT: i32 = 45;
 // screen limit
 const WIDTH_MAX: i32 = SCREEN_WIDTH - 5;
 const WIDTH_MIN: i32 = 5;
+const HEIGHT_MAX: i32 = 5;
 // number of enemies
 const ENEMY_LINES: usize = 5;
 const ENEMY_ROWS: usize = 13;
@@ -38,13 +39,15 @@ fn main() {
     start_enemies(&mut enemies);
     let mut direction = 1;
 
+    let mut bullets: Vec<(i32, i32)> = Vec::new();
+
     let mut enemy_wait = ENEMY_SPEED;
     let mut player_wait = PLAYER_SPEED;
 
     while !root.window_closed() {
 
         // draw
-        draw_objects(&mut con, player, &enemies);
+        draw_objects(&mut con, player, &enemies, &bullets);
         draw_canvas(&mut con, score);
         blit(&mut con, (0, 0), (SCREEN_WIDTH, SCREEN_HEIGHT), &mut root, (0, 0), 1.0, 1.0);
         root.flush();
@@ -63,7 +66,7 @@ fn main() {
         if player_wait > 0 {
             player_wait -= 1;
         } else {
-            let exit = handle_keys(&mut root, &mut player);
+            let exit = handle_keys(&mut root, &mut player, &mut bullets);
             if exit {
                 break
             }
@@ -72,7 +75,7 @@ fn main() {
 }
 
 
-fn handle_keys(root: &mut Root, player: &mut i32) -> bool {
+fn handle_keys(root: &mut Root, player: &mut i32,mut bullets:  &mut Vec<(i32, i32)>) -> bool {
     let option_key = root.check_for_keypress(tcod::input::KeyPressFlags::all());
     match option_key {
         Some(key) => {
@@ -81,8 +84,8 @@ fn handle_keys(root: &mut Root, player: &mut i32) -> bool {
                 if player > &mut WIDTH_MIN {*player -= 1},
             Key { code: Right, .. } =>
                 if player < &mut WIDTH_MAX {*player += 1},
+            Key { code: Spacebar, ..} => newbullet(&mut bullets, &player),
             Key { code: Escape, .. } => return true,
-
             _ => {},
         }},
         None => {},
@@ -91,9 +94,16 @@ fn handle_keys(root: &mut Root, player: &mut i32) -> bool {
     false
 }
 
+fn newbullet(bullets: &mut Vec<(i32, i32)>, player: &i32) {
+    let bullet: (i32, i32) = (**&player, PLAYER_Y - 1);
+    bullets.push(bullet);
+}
+
+
+
 
 fn start_enemies(enemies: &mut [[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
-    let mut y = 3;
+    let mut y = HEIGHT_MAX;
     let mut x: i32;
     let x_start = (SCREEN_WIDTH - (ENEMY_ROWS as i32) * 2 + 1) / 2 ;
 
@@ -132,10 +142,16 @@ fn draw_canvas(con: &mut Offscreen, score: i32) {
 
 
 fn draw_objects(con: &mut Offscreen, player: i32,
-        enemies: &[[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES]) {
+        enemies: &[[(i32, i32, bool); ENEMY_ROWS]; ENEMY_LINES], bullets: &Vec<(i32, i32)>) {
 
     con.set_default_foreground(colors::GREEN);
     con.put_char(player, PLAYER_Y, 'W', BackgroundFlag::None);
+    //con.put_char(0, 0, '*', BackgroundFlag::None);
+    for bullet in bullets.iter() {
+        //println!("{:?}", &bullet);
+        con.put_char(bullet.0, bullet.1, 'l', BackgroundFlag::None);
+        con.put_char(0, 0, '*', BackgroundFlag::None);
+    }
     for i in 0..ENEMY_LINES {
         for j in 0..ENEMY_ROWS {
             match enemies[i][j] {
